@@ -1,5 +1,5 @@
 // auth_utils.js
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "https://mmd-backend-r9la.onrender.com/api";
 
 // --- Local Storage Helpers ---
 
@@ -37,6 +37,11 @@ function getEmail() {
 // Check if logged in (JWT exists & not expired)
 function isLoggedIn() {
   return getAuthData() !== null;
+}
+
+export async function ping() {
+  const res = await fetch(`https://mmd-backend-r9la.onrender.com/ping`);
+  return res.json();
 }
 
 // --- Auth API Calls ---
@@ -94,6 +99,15 @@ async function getVisionBoard(email) {
   return res.json();
 }
 
+async function getChatHistory(email) {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/user/chat_history/${email}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+}
+
 async function chat(email, message) {
   const token = getToken();
   const res = await fetch(`${API_BASE}/user/chat`, {
@@ -119,4 +133,5 @@ export {
   getEmail,
   getAuthData,
   isLoggedIn,
+  getChatHistory
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MessageCircle, BookOpen, Lock, LogOut } from "lucide-react";
 import {
   getVisionBoard,
@@ -91,13 +91,12 @@ const Dashboard = () => {
 
         {/* Buttons Row */}
         <div className="grid grid-cols-1 sm:grid-cols-3 rounded-2xl overflow-hidden gap-px border border-white/30">
-          <button
-            onClick={() => setShowChat(true)}
+          <Link to={"/chat"}
             className="flex items-center justify-center gap-2 p-3 sm:p-4 bg-white/20 backdrop-blur-lg hover:bg-white/60 cursor-pointer transition-all"
           >
             <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
             <span className="font-times text-base sm:text-lg">Chat</span>
-          </button>
+          </Link>
 
           <button
             onClick={() => navigate("/masterclasses")}
@@ -138,23 +137,6 @@ const Dashboard = () => {
           </p>
         </div>
       </div>
-
-      {/* Chat Modal */}
-      {showChat && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-3 sm:px-4">
-          <div className="relative w-full max-w-sm sm:max-w-lg mx-auto rounded-2xl overflow-hidden bg-white/20 backdrop-blur-xl p-4 sm:p-6 lg:p-8 border border-white/30">
-            <p className="mb-4 font-times text-sm sm:text-base lg:text-lg">
-              Sanaya AI Chat Coming Soon...
-            </p>
-            <button
-              onClick={() => setShowChat(false)}
-              className="px-4 py-2 rounded-lg bg-white/30 hover:bg-white/60 text-xs sm:text-sm lg:text-base"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </section>
   );
 };

@@ -107,7 +107,7 @@ const Auth = () => {
             </button>
             <button
               className="w-full px-6 py-2 rounded-lg bg-transparent text-luxury-gold font-luxury cursor-pointer text-base font-semibold border-none mt-2"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/")}
             >
               Back
             </button>

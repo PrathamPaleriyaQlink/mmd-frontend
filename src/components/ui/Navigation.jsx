@@ -29,7 +29,7 @@ const Navigation = () => {
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-14 py-4 font-playfair">
+      <div className="container mx-auto px-5 lg:px-14 py-4 font-playfair">
         <div className="relative flex items-center justify-between">
           {/* Centered Name - absolutely centered, always on top */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-max pointer-events-none select-none">
