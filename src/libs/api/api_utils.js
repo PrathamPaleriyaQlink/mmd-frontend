@@ -1,0 +1,122 @@
+// auth_utils.js
+const API_BASE = "http://localhost:8000/api";
+
+// --- Local Storage Helpers ---
+
+function setAuthData(token, email, expiresInSeconds = 3600) {
+  const expiryTime = new Date().getTime() + expiresInSeconds * 1000;
+  const authData = { token, email, expiry: expiryTime };
+  localStorage.setItem("authData", JSON.stringify(authData));
+}
+
+function getAuthData() {
+  const authData = localStorage.getItem("authData");
+  if (!authData) return null;
+  const parsed = JSON.parse(authData);
+  if (parsed.expiry && new Date().getTime() > parsed.expiry) {
+    logout();
+    return null;
+  }
+  return parsed;
+}
+
+function logout() {
+  localStorage.removeItem("authData");
+}
+
+function getToken() {
+  const auth = getAuthData();
+  return auth ? auth.token : null;
+}
+
+function getEmail() {
+  const auth = getAuthData();
+  return auth ? auth.email : null;
+}
+
+// Check if logged in (JWT exists & not expired)
+function isLoggedIn() {
+  return getAuthData() !== null;
+}
+
+// --- Auth API Calls ---
+
+async function register(email, password) {
+  const res = await fetch(`${API_BASE}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  return res.json();
+}
+
+async function login(email, password) {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (res.ok && data.access_token) setAuthData(data.access_token, email);
+  return data;
+}
+
+// Store JWT with email and expiry (default: 1 hour)
+export const storeToken = (token, email, expiresInMinutes = 60) => {
+  const expiry = new Date().getTime() + expiresInMinutes * 60 * 1000; // ms
+  const data = {
+    token,
+    email,
+    expiry,
+  };
+  localStorage.setItem("authData", JSON.stringify(data));
+};
+
+async function generateVision(email, password, answers = [], vibe = "calm") {
+  const res = await fetch(`${API_BASE}/auth/generate-vision`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, answers, vibe }),
+  });
+  const data = await res.json();
+  if (res.ok && data.access_token) setAuthData(data.access_token, email);
+  return data;
+}
+
+// --- User API Calls ---
+
+async function getVisionBoard(email) {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/user/vision-board/${email}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+}
+
+async function chat(email, message) {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/user/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ email, message }),
+  });
+  return res.json();
+}
+
+// --- Exports ---
+export {
+  register,
+  login,
+  generateVision,
+  getVisionBoard,
+  chat,
+  logout,
+  getToken,
+  getEmail,
+  getAuthData,
+  isLoggedIn,
+};
