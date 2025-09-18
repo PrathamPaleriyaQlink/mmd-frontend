@@ -30,14 +30,17 @@ const Dashboard = () => {
       try {
         const data = await getVisionBoard(email);
         const url =
-          data?.vision_board_url && data.vision_board_url.trim() !== ""
+          data?.vision_board_url &&
+          data.vision_board_url.trim() !== "" &&
+          data.vision_board_url !== "failed" &&
+          data.vision_board_url !== "preparing"
             ? data.vision_board_url
-            : "/default_vision.webp";
+            : "/background2.webp";
 
         setVisionBoard(url);
       } catch (err) {
         console.error("Error fetching vision board:", err);
-        setVisionBoard("/default_vision.webp");
+        setVisionBoard("/background2.webp");
       }
     };
 
@@ -91,7 +94,8 @@ const Dashboard = () => {
 
         {/* Buttons Row */}
         <div className="grid grid-cols-1 sm:grid-cols-3 rounded-2xl overflow-hidden gap-px border border-white/30">
-          <Link to={"/chat"}
+          <Link
+            to={"/chat"}
             className="flex items-center justify-center gap-2 p-3 sm:p-4 bg-white/20 backdrop-blur-lg hover:bg-white/60 cursor-pointer transition-all"
           >
             <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
