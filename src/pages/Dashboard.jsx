@@ -6,11 +6,13 @@ import {
   isLoggedIn,
   getEmail,
   logout,
+  getUserProfile,
 } from "../libs/api/api_utils";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [showChat, setShowChat] = useState(false);
+  const [name, setName] = useState("");
   const [userName] = useState("Sanaya");
   const [visionBoard, setVisionBoard] = useState(null);
 
@@ -35,16 +37,26 @@ const Dashboard = () => {
           data.vision_board_url !== "failed" &&
           data.vision_board_url !== "preparing"
             ? data.vision_board_url
-            : "/background2.webp";
+            : null;
 
-        setVisionBoard(url);
+        setVisionBoard(data.vision_board_url);
       } catch (err) {
         console.error("Error fetching vision board:", err);
-        setVisionBoard("/background2.webp");
+        setVisionBoard(null);
+      }
+    };
+
+    const fetchName = async () => {
+      try {
+        const data = await getUserProfile(email);
+        setName(data.name);
+      } catch (err) {
+        setName("");
       }
     };
 
     fetchVisionBoard();
+    fetchName();
   }, [navigate]);
 
   const handleLogout = () => {
@@ -57,7 +69,11 @@ const Dashboard = () => {
       {/* Background */}
       <img
         className="absolute inset-0 w-full h-full object-cover z-0"
-        src={visionBoard || "/default_vision.webp"}
+        src={
+          !visionBoard || visionBoard === "" || visionBoard === "preparing" || visionBoard === "failed"
+            ? "/background2.webp"
+            : visionBoard
+        }
         alt="Dashboard background"
       />
       <div className="absolute inset-0 bg-black/15 backdrop-blur-md z-0" />
@@ -78,7 +94,7 @@ const Dashboard = () => {
         {/* Greeting */}
         <div className="text-center">
           <h1 className="text-xl sm:text-2xl lg:text-4xl font-times drop-shadow-md">
-            Hi, {userName} 🌸
+            Hi, {name} 🌸
           </h1>
           <p className="text-sm sm:text-base lg:text-lg text-black/60 mt-2">
             Welcome back to your manifestation journey
@@ -119,6 +135,52 @@ const Dashboard = () => {
             <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
             <span className="font-times text-base sm:text-lg">Vault</span>
           </button>
+        </div>
+
+        {/* vision board Card */}
+        <div className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/30 shadow-lg p-3 sm:p-5 lg:p-6 text-center text-xl font-times">
+          {visionBoard === "failed" && (
+            <div>
+              <p className="mb-3">⚠️ Unexpected error occured while creating vision board.</p>
+              <button onClick={() => navigate("/re-genrate")}  className="rounded-full bg-white/30 px-5 sm:px-6 py-2 font-times text-xs sm:text-sm lg:text-base hover:bg-white/80 transition-all">
+                Create Again
+              </button>
+            </div>
+          )}
+
+          {visionBoard === "preparing" && (
+            <p>⏳ Preparing your vision board... You'll receive an email</p>
+          )}
+
+          {(visionBoard === "" || visionBoard === null) && (
+            <button onClick={() => navigate("/begin")} className="rounded-full bg-white/30 px-5 sm:px-6 py-2 font-times text-xs sm:text-sm lg:text-base hover:bg-white/80 transition-all">
+              Create One
+            </button>
+          )}
+
+          {visionBoard && visionBoard !== "failed" && visionBoard !== "preparing" && visionBoard !== "" && (
+            <div className="relative group mt-3">
+      <img
+        src={visionBoard}
+        alt="Vision Board"
+        className="rounded-xl w-full h-auto"
+      />
+      {/* Hover Overlay */}
+      <div className="absolute inset-0 bg-[#cdcdcd]/10 rounded-xl flex items-center justify-center opacity-0 hover:backdrop-blur-lg group-hover:opacity-100 transition-all">
+        <button onClick={() => navigate("/re-genrate")} className="mx-2 rounded-full bg-white/80 px-4 py-2 text-sm sm:text-base hover:bg-white transition">
+          Create Again
+        </button>
+        <a
+          href={visionBoard}
+          target="_blank"
+          download="vision_board.jpg"
+          className="mx-2 rounded-full bg-white/80 px-4 py-2 text-sm sm:text-base hover:bg-white transition"
+        >
+          Download
+        </a>
+      </div>
+    </div>
+          )}
         </div>
 
         {/* Ritual Card */}

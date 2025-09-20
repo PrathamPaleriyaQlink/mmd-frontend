@@ -1,17 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
-import { generateVision, storeToken } from "../libs/api/api_utils"; // frontend API utils
+import { generateVision, reGenerateVision, storeToken } from "../libs/api/api_utils"; // frontend API utils
 // questions and vibes arrays remain the same
 
 const questions = [
-  {
-    label: "What is your name?",
-    variable: "name",
-    type: "string",
-    placeholder: "e.g. Sanaya",
-    rows: 1,
-  },
   {
     label: "What are 3 specific goals you want to manifest this year?",
     variable: "goals",
@@ -96,23 +89,7 @@ const questions = [
     placeholder:
       "Let your heart finish this. Whatever word shows up is your energetic north star.\n(e.g. Fulfilled, unstoppable, grateful)",
     rows: 4,
-  },
-  {
-    label: "Enter your email address to save your vision board",
-    variable: "email",
-    type: "email",
-    placeholder: "e.g. your@email.com",
-    rows: 1,
-    required: true,
-  },
-  {
-    label: "Create a password to secure your vision board",
-    variable: "password",
-    type: "password",
-    placeholder: "Enter a strong password",
-    rows: 1,
-    required: true,
-  },
+  }
 ];
 
 const vibes = [
@@ -154,7 +131,7 @@ const vibes = [
   },
 ];
 
-const Begin = () => {
+const ReGenrateVision = () => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
   const [current, setCurrent] = useState(0);
@@ -205,23 +182,16 @@ const Begin = () => {
 
     try {
       const payload = {
-        email: answers.email,
-        name: answers.name,
-        password: answers.password,
         answers: { ...answers }, // put all user responses here
         vibe: vibe, // send full object {key, emoji, name, visuals}
       };
 
-      const res = await generateVision(
-        payload.email,
-        payload.name,
-        payload.password,
+      const res = await reGenerateVision(
         payload.answers,
         payload.vibe
       );
 
       if (res.access_token) {
-        storeToken(res.access_token, answers.email);
         setStep("done");
       } else if (res.detail) {
         setError(res.detail);
@@ -271,7 +241,7 @@ const Begin = () => {
                   className="w-full px-6 py-4 rounded-lg bg-white text-black font-luxury text-lg font-semibold border border-luxury-gold shadow-lg hover:bg-luxury-gold/10 transition-all duration-300"
                   onClick={() => navigate("/dashboard")}
                 >
-                  DIRECTLY HEAD TO DASHBOARD
+                  BACK TO DASHBOARD
                 </button>
               </>
             ) : (
@@ -389,4 +359,4 @@ const Begin = () => {
   );
 };
 
-export default Begin;
+export default ReGenrateVision;

@@ -77,18 +77,44 @@ export const storeToken = (token, email, expiresInMinutes = 60) => {
   localStorage.setItem("authData", JSON.stringify(data));
 };
 
-async function generateVision(email, password, answers = [], vibe = "calm") {
+async function generateVision(email, name, password, answers = [], vibe = "calm") {
   const res = await fetch(`${API_BASE}/auth/generate-vision`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password, answers, vibe }),
+    body: JSON.stringify({ email, name, password, answers, vibe }),
   });
   const data = await res.json();
   if (res.ok && data.access_token) setAuthData(data.access_token, email);
   return data;
 }
 
+
 // --- User API Calls ---
+
+async function reGenerateVision(answers = [], vibe = "calm") {
+  const token = getToken();
+  const email = getEmail();
+  if (email) {
+    const res = await fetch(`${API_BASE}/user/regenerate-vision`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ email, answers, vibe }),
+    });
+    const data = await res.json();
+    return data;
+  } else {
+    return none
+  }
+}
+
+async function getUserProfile(email) {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/user/user-profile?email=${email}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return res.json();
+}
 
 async function getVisionBoard(email) {
   const token = getToken();
@@ -133,5 +159,7 @@ export {
   getEmail,
   getAuthData,
   isLoggedIn,
-  getChatHistory
+  getChatHistory,
+  reGenerateVision,
+  getUserProfile
 };

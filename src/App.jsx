@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Chat from "./pages/Chat";
 import { ping } from "./libs/api/api_utils";
 import { useEffect } from "react";
+import ReGenrateVision from "./pages/ReGenrateVision";
 
 function App() {
   useEffect(() => {
@@ -31,6 +32,7 @@ function App() {
           </Route>
           <Route path="auth" element={<Auth />} />
           <Route path="begin" element={<Begin />} />
+          <Route path="re-genrate" element={<ReGenrateVision />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="chat" element={<Chat />} />
           <Route path="*" element={<NotFound />} />
