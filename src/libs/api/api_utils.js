@@ -97,7 +97,10 @@ async function reGenerateVision(answers = [], vibe = "calm") {
   if (email) {
     const res = await fetch(`${API_BASE}/user/regenerate-vision`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}` 
+      },
       body: JSON.stringify({ email, answers, vibe }),
     });
     const data = await res.json();

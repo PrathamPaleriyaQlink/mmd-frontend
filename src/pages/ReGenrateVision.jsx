@@ -191,11 +191,10 @@ const ReGenrateVision = () => {
         payload.vibe
       );
 
-      if (res.access_token) {
+      if (res.sucess === true) {
         setStep("done");
-      } else if (res.detail) {
-        setError(res.detail);
-      } else {
+      }
+      else {
         setError("Something went wrong while generating your vision board.");
       }
     } catch (err) {
